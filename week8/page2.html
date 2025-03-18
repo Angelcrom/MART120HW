@@ -1,0 +1,112 @@
+<html>
+
+<style>
+    body {
+        background-color: #e5dcdc;
+        color: #476945;
+        font-family: 'Comic Sans MS', sans-serif;
+        background-image: url('translily.PNG');
+        background-position: center;
+        background-size: 100% 100%;
+    }
+
+    h1 {
+        color: #476945;
+        font-size: 60px;
+        text-align: center;
+    }
+
+    p {
+        color: #476945;
+        font-size: 35px;
+        text-align: center;
+    }
+
+    .error {
+        border: 2px solid red;
+        }
+    </style>
+<head>
+    <title>lily list</title>
+    <link rel="stylesheet" type="text/css" href="mainstyle.css">
+
+</head>
+<body>
+    <h1>✿get a lily autograph✿</h1>
+    <p>fill out the form below</p>
+    <form id="lilyForm" action="nextPage.html" method="POST">
+        full name! : <input type="text" id="Name"><br>
+        <div class="error" id="nameError"></div>
+        address! : <input type="text" id="address"><br>
+        <div class="error" id="addressError"></div>
+        email! : <input type="text" id="email"><br>
+        <div class="error" id="emailError"></div>
+        social security number! : <input type="text" id="ssn"><br>
+        <div class="error" id="ssnError"></div>
+        <button id="myReset" type="reset">Reset</button>
+        <button id="mySubmit" type="submit">Submit</button>
+    </form>
+
+    <a href="index.html" id="specificLink">✿back✿</a>
+
+    <script>
+        document.getElementById("mySubmit").addEventListener("click", function(event) {
+            event.preventDefault(); 
+
+            document.querySelectorAll('.error').forEach(function(error) {
+                error.textContent = '';
+            });
+
+            let isValid = true;
+            let firstinvalidField = null;
+
+            document.querySelectorAll('input[type="text"]').forEach(function(field) {
+                field.classList.remove('error');
+            });
+
+            var name = document.getElementById("Name").value;
+            if (name === "") {
+                //make a window alert if the name field is empty
+                window.alert("Please enter your name.");
+                firstinvalidField = firstinvalidField || Name;
+                isValid = false;
+                field.classList.add('error');
+            }
+
+            var address = document.getElementById("address").value;
+            if (address === "") {
+                window.alert("Please enter your address.");
+                if (!firstInvalidField) firstInvalidField = address;
+                isValid = false;
+                field.classList.add('error');
+            }
+
+            var email = document.getElementById("email").value;
+            if (email === "") {
+                window.alert("Please enter your email.");
+                if (!firstInvalidField) firstInvalidField = email
+                isValid = false;
+                field.classList.add('error');
+            }
+
+            var ssn = document.getElementById("ssn").value;
+            if (ssn === "") {
+                window.alert("Please enter your social security number.");
+                if (!firstInvalidField) firstInvalidField = ssn;
+                isValid = false;
+                    
+            }
+
+            if (firstInvalidField) {
+                firstInvalidField.focus();
+            }
+
+            // If all fields are valid, submit the form
+            if (isValid) {
+                document.getElementById("lilyForm").submit();
+            }
+        });
+    </script>
+</body>
+        
+</html>

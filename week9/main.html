@@ -1,0 +1,47 @@
+<html>
+
+    <head>
+        <title>
+            First p5.js page
+        </title>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.1.9/p5.min.js"></script>
+        <script>
+        function setup() {
+            createCanvas(400, 400);
+        }
+
+        function draw() {
+            background(220);
+
+            //hair
+            square(100, 200, 200);
+            //head
+            ellipse(200, 200, 200, 250);
+            //eyes
+            fill(255);
+            circle(150, 200, 50);
+            circle(250, 200, 50);
+            //nose
+            rect(190, 200, 20, 50);
+            //hat
+            triangle(100, 150, 200, 10, 300, 150);
+            //mouth
+            point(245,90);
+            point(155,90);
+            line(150, 250, 250, 250);
+
+            textSize(22);
+            text("Angel Cromwell", 0, 50 );
+
+            textSize(22);
+            text("hello", 0, 20 );
+            
+
+
+        }
+        </script>
+    </head>
+    <body>
+
+    </body>
+</html>

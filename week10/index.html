@@ -1,0 +1,111 @@
+<html>
+
+    <head>
+        <title>
+            First p5.js page
+        </title>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.1.9/p5.min.js"></script>
+        <script>
+let eyeRange = 0;
+let eyeSpeed;
+let mouthRange = 0;
+let mouthSpeed;
+let bangL = 0;
+let bangR = 0;
+let bangLSpeed;
+let bangRSpeed;
+let titleSize = 20;
+let titleGrowing = true;
+let titleStep = 0;
+
+function setup() {
+  createCanvas(400, 400);
+
+  // random speeds
+  eyeSpeed = random(0.07,0.7);
+  mouthSpeed = random(0.5, 0.07);
+  bangLSpeed = random(0.07, 0.7);
+  bangRSpeed = random(0.7, 0.9);
+}
+
+function draw() {
+  background(157, 156, 98);
+
+  // positions
+  eyeRange += eyeSpeed;
+  if (eyeRange > 5 || eyeRange < -5) {
+    eyeSpeed *= -1;
+  }
+
+   mouthRange += mouthSpeed;
+  if (mouthRange > 10 || mouthRange < -10) {
+    mouthSpeed *= -1;
+  }
+
+  bangL += bangLSpeed;
+  if (bangL > 20 || bangL < -20) {
+    bangLSpeed *= -1;
+  }
+  
+  bangR += bangRSpeed;
+  if (bangR > 20 || bangR < -20) {
+    bangRSpeed *= -1;
+  }
+
+titleSize += titleGrowing ? 1 : -1;
+if (titleSize >= 50 || titleSize <= 10) {
+  titleGrowing = !titleGrowing;
+}
+
+  
+  // hair
+  fill(101, 67, 33);
+  square(100, 200, 200);
+  
+  // head
+  fill(236, 230, 219);
+  ellipse(200, 200, 200, 250);
+  
+  // nose
+  fill(236,200,179)
+  stroke(237,227,221)
+  rect(190, 220, 20, 30);
+  
+  // body
+  fill(144, 152, 115);
+  stroke(101, 67, 33)
+  ellipse(200, 460, 200, 250);
+
+  // eyes
+  strokeWeight(1);
+  fill(255);
+  circle(150 + eyeRange, 200, 50);
+  circle(250 + eyeRange, 200, 50);
+
+  // pupils
+  strokeWeight(40);
+  point(245 + eyeRange, 200);
+  point(155 + eyeRange, 200);
+
+  // bangs
+  strokeWeight(10)
+  stroke(101, 67, 33);
+  fill(101, 67, 33);
+  triangle(80+bangL, 250+bangL, 100, 100, 200, 72);
+  triangle(320+bangR, 250+bangR, 300, 100, 200, 72);
+
+  // mouth
+  strokeWeight(1);
+  line(170, 260 + mouthRange, 200, 270 + mouthRange);
+  line(200, 270 + mouthRange, 230, 260 + mouthRange);
+
+  textSize(titleSize);
+  fill(0);
+  text("hello", 10, 50);
+}
+        </script>
+    </head>
+    <body>
+
+    </body>
+</html>

@@ -1,0 +1,119 @@
+<html>
+
+    <head>
+        <title>
+            First p5.js page
+        </title>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.1.9/p5.min.js"></script>
+        <script>
+
+// variables
+var x = 100;
+var y = 100;
+let won = false;
+let exitZone = {
+    x: 400,
+    y: 200,
+    size: 50
+};
+let static = null;
+let square = { x: 50, y: 200, w: 30, h: 30, dx: 2, dy: 2, color: 'yellow' };
+let square2 = { x: 50, y: 200, w: 30, h: 30, dx: 2, dy: 2, color: 'blue' }; 
+function setup() {
+
+  createCanvas(400, 400);
+}
+
+function draw() {
+    background(157, 156, 98);
+    fill(255, 0, 0);
+    circle(x,y,20);
+
+    // movement
+    if(keyIsDown(68)){
+        x += 2;
+    }
+    if(keyIsDown(65)){
+        x -= 2;
+    }
+    if(keyIsDown(87)){
+        y -= 2;
+    }
+    if(keyIsDown(83)){
+        y += 2;
+    }
+
+    // exit
+    stroke(5);
+    strokeWeight(20);
+    rect(exitZone.x, exitZone.y, exitZone.size, exitZone.size);
+    noStroke();
+
+    //square random movement
+    if (random(1) < 0.01) {
+        square.dx = random(-2, 2);
+        square.dy = random(-2, 2);
+    }
+    // square movement
+    square.x += square.dx;
+    square.y += square.dy;
+    // square wrap around
+    if (square.x > width) square.x = 0; 
+    else if (square.x < 0) square.x = width;
+    if (square.y > height) square.y = 0; 
+    else if (square.y < 0) square.y = height;
+    // draw square
+    fill(square.color);
+    rect(square.x, square.y, square.w, square.h);
+
+    // square2 random movement
+    if (random(1) < 0.01) {
+        square2.dx = random(-2, 2);
+        square2.dy = random(-2, 2);
+    }
+    // square2 movement
+    square2.x += square2.dx;
+    square2.y += square2.dy;
+    // square2 wrap around
+    if (square2.x > width) square2.x = 0; 
+    else if (square2.x < 0) square2.x = width; 
+    if (square2.y > height) square2.y = 0; 
+    //draw square2
+    fill(square2.color);
+    rect(square2.x, square2.y, square2.w, square2.h);
+   
+    //win condition
+    if (!won &&//if player is not in the exit zone
+        x > exitZone.x &&  
+        x < exitZone.x + exitZone.size &&
+        y > exitZone.y &&
+        y < exitZone.y + exitZone.size)
+        won = true;
+                
+    if (won) { //if player is in the exit zone
+        fill(0, 255, 0);
+        textSize(32);
+        text("You Win!", 130, 200);
+    }
+
+    if (static) {
+        fill(0, 255, 0);
+        rect(static.x, static.y, 50, 50);
+            }
+        }
+
+        // static obstacle
+function mousePressed()
+    {
+        static = {
+        x: mouseX,
+        y: mouseY,
+        }
+
+}
+        </script>
+    </head>
+    <body>
+
+    </body>
+</html>

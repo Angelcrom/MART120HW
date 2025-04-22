@@ -1,0 +1,173 @@
+<html>
+
+    <head>
+        <title>
+            First p5.js page
+        </title>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.1.9/p5.min.js"></script>
+        <script>
+
+// variables
+    let x = 100;
+    let y = 100;
+    let won = false;
+    let square, square2;
+    let exitZone;
+    let obstacles = [];
+
+    function setup() {
+
+        createCanvas(400, 400);
+        createExitZone();
+        createObstacles();
+        createPlayer();
+}
+
+    function draw() {
+        background(157, 156, 98);
+        fill(255, 0, 0);
+        drawPlayer();
+        movePlayer();
+        drawObject();
+        moveSquare1();
+        moveSquare2();
+        drawExitZone();
+        drawBorder();
+        checkExitZone();
+        displayWinMessage();
+    }
+
+    // a function to create player
+    function createPlayer() {
+        x = 60;
+        y = 200;
+    }
+    drawPlayer();
+    // function to draw player
+    function drawPlayer() {
+        fill(255, 0, 0);
+        circle(x, y, 20);
+    }
+
+    // draw object when mouse pressses
+    function drawObject() {
+        if (mouseIsPressed) {
+            fill(0, 255, 0);
+            rect(mouseX, mouseY, 20, 20);
+        }
+    }
+ 
+
+    // function to move playe
+    function movePlayer() {
+        if (keyIsDown(68)) {
+            x += 2;
+        }
+        if (keyIsDown(65)) {
+            x -= 2;
+        }
+        if (keyIsDown(87)) {
+            y -= 2;
+        }
+        if (keyIsDown(83)) {
+            y += 2;
+        }
+    }
+    
+
+    function createObstacles() {
+            square = {
+                x: random(0, width),
+                y: random(0, height),
+                w: random(20, 50),
+                h: random(20, 50),
+                dx: random(-2, 2),
+                dy: random(-2, 2),
+                color: color(255, 255, 0)
+            };
+            square2 = {
+                x: random(0, width),
+                y: random(0, height),
+                w: random(20, 50),
+                h: random(20, 50),
+                dx: random(-2, 2),
+                dy: random(-2, 2),
+                color: color(0, 0, 255)
+            };
+        }
+
+
+        function moveSquare1() {
+            moveSquare(square);
+        }
+
+        function moveSquare2() {
+            moveSquare(square2);
+        }
+
+        function moveSquare(sq) {
+            if (random(1) < 0.01) {
+                sq.dx = random(-2, 2);
+                sq.dy = random(-2, 2);
+            }
+
+            sq.x += sq.dx;
+            sq.y += sq.dy;
+
+            if (sq.x > width) sq.x = 0;
+            else if (sq.x < 0) sq.x = width;
+
+            if (sq.y > height) sq.y = 0;
+            else if (sq.y < 0) sq.y = height;
+
+            fill(sq.color);
+            rect(sq.x, sq.y, sq.w, sq.h);
+        }
+
+        //draw bordr
+        function drawBorder() {
+            stroke(5);
+            strokeWeight(5);
+        }
+
+   //function that generates a green exit zone
+    function createExitZone() {
+        exitZone = {
+            x: 340,
+            y: random(60, 340),
+            size: 50
+        }
+    }
+
+    //draw exit zone
+    function drawExitZone() {
+        fill(0, 255, 0);
+        rect(exitZone.x, exitZone.y, exitZone.size, exitZone.size);
+    }
+
+    //function to check if player is in the exit zone
+    function checkExitZone() {
+        if (!won && //if player is not in the exit zone
+            x > exitZone.x &&
+            x < exitZone.x + exitZone.size &&
+            y > exitZone.y &&
+            y < exitZone.y + exitZone.size) {
+            won = true;
+        }
+    }
+
+    //fuction to display win message
+    function displayWinMessage() {
+        if (won) {
+            fill(255, 0, 0);
+            textSize(32);
+            text("You Win!", 130, 200);
+        }
+    }
+
+        </script>
+    </head>
+    <body>
+
+    </body>
+</html>

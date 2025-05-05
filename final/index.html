@@ -1,0 +1,332 @@
+<html>
+
+    <head>
+        <title>
+            First p5.js page
+        </title>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.1.9/p5.min.js"></script>
+        <script>
+            // --------------------------------------------
+            // variables
+            //--------------------------------------------
+            let charX = 200;
+            let charY = 400;
+            let velocity = 0;
+            let gravity = 0.5;
+            let lift = -2;
+
+            let bgStars = [];
+            let collectibleStars = [];
+            let starSpawnInterval = 100;
+            let score = 0;
+
+            let roids = [];
+            let roidspawnCountdown = 0;
+            let gameTime = 0;
+            let gameOver = false;
+            let preGame = true;
+            let titleSize = 40;
+            let titleGrowing = true;
+            let titleStep = 0;
+
+            function setup() {
+                createCanvas(windowWidth, windowHeight);
+                frameRate(60);
+
+                // ----------------------------------------------
+                // background stars
+                //----------------------------------------------
+
+                // make background stars
+                for (let i = 0; i < 50; i++) { 
+                    bgStars.push({
+                        x: random(width),
+                        y: random(height),
+                        size: random(1, 10),
+                        speed: random(5, 7)
+                    });
+                }
+            }
+
+            function draw() {
+                background(10);
+                gameTime++;
+                
+                // keep updating background stars
+                for (let star of bgStars) {
+                    star.x -= star.speed;
+                    if (star.x < 0) { 
+                        star.x = width;
+                        star.y = random(height);
+                        star.size = random(1, 10);
+                        star.speed = random(5, 7);
+                    }
+                    noStroke();
+                    fill(255, 255, 255);
+                    ellipse(star.x, star.y, star.size);
+                }
+
+                // ----------------------------------------------
+                // character
+                //----------------------------------------------
+
+                // spaceship
+                fill(0);
+                ellipse(charX, charY, 150, 70);
+                fill(96, 102, 133);
+                ellipse(charX, charY - 2, 140, 60);
+                fill(126, 132, 143);
+                ellipse(charX, charY - 5, 130, 50);
+                fill(0);                
+                ellipse(charX, charY - 20, 70, 60);
+                fill(163, 176, 220);
+                ellipse(charX, charY - 18, 60, 50);
+                fill(193, 206, 230);
+                ellipse(charX, charY - 25, 50, 40);
+                fill(223, 236, 260);
+                ellipse(charX, charY - 32, 30, 20);
+                fill(0);
+                ellipse(charX, charY + 18, 20, 10);
+                fill(255, 250, 219);
+                ellipse(charX, charY + 18, 10, 5);
+                fill(0);
+                ellipse(charX + 48, charY - 2, 20, 15);
+                fill(255, 250, 219);
+                ellipse(charX + 48, charY - 2, 10, 10);
+                fill(0);
+                ellipse(charX - 48, charY - 2, 20, 15);
+                fill(255, 250, 219);
+                ellipse(charX - 48, charY - 2, 10, 10);
+
+                // movement
+                velocity += gravity;
+                if (keyIsDown(32)) {
+                    velocity += lift;
+                }
+                charY += velocity;
+
+                // stay in screen
+                let bounds = 70;
+                if (charY > height - bounds) {
+                    charY = height - bounds;
+                    velocity = 0;
+                } else if (charY < bounds) {
+                    charY = bounds;
+                    velocity = 0;
+                }
+
+                // ----------------------------------------------
+                // preGame
+                //---------------------------------------------
+
+                //make the start of game screen
+                if (preGame) {
+                        fill(126, 132, 143);
+                        textSize(150);
+                        textAlign(CENTER, CENTER);
+                        text("Galactic Getaway", width / 2, height / 2-150);
+                        textSize(30);
+                        text("Dodge roids and collect stars!", width / 2, height / 2 );
+                        textSize(titleSize);
+                        textAlign(CENTER, CENTER);
+                        text("Press SPACE to start", width / 2, height / 2+100);
+
+                        titleSize += titleGrowing ? .1 : -.1;
+                            if (titleSize >= 50 || titleSize <= 40) {
+                            titleGrowing = !titleGrowing;
+                            }
+
+                        
+                        return;
+                    }
+
+                // ----------------------------------------------
+                // collectible stars
+                //---------------------------------------------
+
+                // make collectible stars
+                if (frameCount % starSpawnInterval === 0) {
+                    collectibleStars.push({
+                        x: width + 20,
+                        y: random(70, height - 70),
+                        radius1: 6,
+                        radius2: 24,
+                        npoints: 4,
+                        speed: 7,
+                        collected: false
+                    });
+                }
+
+                // draw + update collectible stars
+                for (let i = collectibleStars.length - 1; i >= 0; i--) {
+                    let s = collectibleStars[i];
+                    s.x -= s.speed;
+
+                    let d = dist(charX, charY, s.x, s.y);
+                    if (d < 70 && !s.collected) { 
+                        s.collected = true;
+                        score++;
+                    }
+
+                    if (s.x < -20 || s.collected) { //if offscreen or collected
+                        collectibleStars.splice(i, 1);  //remove from array
+                        continue;
+                    }
+
+                    fill(255, 255, 255);
+                    stroke(255, 255, 255);
+                    drawStar(s.x, s.y, s.radius1, s.radius2, s.npoints);
+                    noStroke();
+                }
+
+                // ----------------------------------------------
+                // roids
+                //----------------------------------------------
+
+                // min and max spawn interval
+                let minInterval = max(20, 100 - Math.floor(gameTime / 50));
+                let maxInterval = max(minInterval + 20, 200 - Math.floor(gameTime / 50));
+
+                // make roids
+                roidspawnCountdown--;
+                if (roidspawnCountdown <= 0) {
+                    roids.push({
+                        x: width + 100,
+                        y: random(100, height - 100),
+                        speed: random(6, 15)
+                    });
+                    roidspawnCountdown = Math.floor(random(minInterval, maxInterval));
+                }
+                // roids movement and collision
+                for (let i = roids.length - 1; i >= 0; i--) {
+                    let r = roids[i];
+                    r.x -= r.speed;
+
+                    // check for collision
+                    let d = dist(charX, charY, r.x, r.y);
+                    if (d < 100) {
+                        gameOver = true;
+                        noLoop();
+                        break;
+                    }
+                    
+                    // remove roids
+                    if (r.x < -200) {
+                        roids.splice(i, 1);
+                    }
+                    drawRoids(r.x, r.y);
+                }
+
+                //-------------------------------------------------
+                //scores and screens
+                //---------------------------------------------------
+                
+                // on screen scorees
+                fill(255);
+                textSize(32);
+                textAlign(LEFT, TOP);
+                text("Stars: " + score, 10, 10);
+                textAlign(LEFT, BOTTOM);
+                text("Distance: " + Math.floor(gameTime) + "km", 10, height - 10);
+
+                // gameOver screen
+                if (gameOver) {
+                    fill(255, 0, 0);
+                    textSize(150);
+                    textAlign(CENTER, CENTER);
+                    text("Game Over", width / 2, height / 2 - 50) ;
+                    textSize(45);
+                    text("Total Stars: " + score, width / 2, height / 2 + 50);
+                    text("Distance traveled: " + Math.floor(gameTime) + "km", width / 2, height / 2 + 100);
+                    textSize(32);
+                    text("Press SPACE to restart", width / 2, height / 2 + 200);
+                }
+
+                // preGame screen
+                if (preGame) {
+                    fill(255, 0, 0);
+                    textSize(64);
+                    textAlign(CENTER, CENTER);
+                    text("Press SPACE to start", width / 2, height / 2);
+                }
+            }
+
+            //--------------------------------------------------
+            //reset
+            //-------------------------------------------------
+            function keyPressed() {
+                if (keyCode === 32) { // Spacebar to restart
+                    if (gameOver || preGame) {
+                        preGame = false;
+                        gameOver = false;
+                        roidspawnCountdown = 0;
+                        roids = [];
+                        collectibleStars = [];
+                        velocity = 0;
+                        score = 0;
+                        gameTime = 0;
+                        charY = height / 2;
+                        loop(); // Start the game loop again
+                    }
+                }
+            }
+
+            //-----------------------------------------------
+            //draw funcions
+            //-----------------------------------------------
+            function drawRoids(x, y) {
+                fill(256, 0, 0);
+                ellipse(x + 50, y, 200, 80);
+                fill(256, 150, 0);
+                ellipse(x + 50, y, 150, 50);
+                fill(256, 200, 0);
+                ellipse(x + 50, y, 100, 20);
+                fill(0);
+                circle(x, y, 160);
+                fill(126, 132, 143);
+                ellipse(x, y, 130, 140);
+                stroke(126, 132, 143);
+                ellipse(x + 4, y, 140, 120);
+                noStroke();
+                fill(0);
+                ellipse(x, y + 4, 45, 40);
+                fill(96, 102, 113);
+                ellipse(x, y, 40, 35);
+                fill(0);
+                ellipse(x - 40, y - 35, 25, 32);
+                fill(96, 102, 113);
+                ellipse(x - 45, y - 40, 25, 32);
+                fill(0);
+                ellipse(x + 50, y - 40, 35, 27);
+                fill(96, 102, 113);
+                ellipse(x + 45, y - 40, 32, 22);
+                fill(0);
+                ellipse(x + 25, y + 50, 35, 27);
+                fill(96, 102, 113);
+                ellipse(x + 20, y + 50, 32, 22);
+                fill(156, 162, 173);
+                ellipse(x - 40, y + 30, 20, 20);
+                ellipse(x + 40, y - 5, 20, 20);
+            }
+
+            function drawStar(x, y, radius1, radius2, npoints) {
+                let angle = TWO_PI / npoints;
+                let halfAngle = angle / 2.0;
+                beginShape();
+                for (let a = 0; a < TWO_PI; a += angle) {
+                    let sx = x + cos(a) * radius2;
+                    let sy = y + sin(a) * radius2;
+                    vertex(sx, sy);
+                    sx = x + cos(a + halfAngle) * radius1;
+                    sy = y + sin(a + halfAngle) * radius1;
+                    vertex(sx, sy);
+                }
+                endShape(CLOSE);
+            }
+
+        </script>
+    </head>
+    <body>
+
+    </body>
+</html>
